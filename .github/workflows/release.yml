@@ -113,8 +113,8 @@ jobs:
       - name: Create zip archive
         if: matrix.archive == 'zip'
         run: |
-          Compress-Archive -Path dist\* -DestinationPath cfst_${{ github.ref_name }}_${{ matrix.target }}.zip
-          Get-Item cfst_${{ github.ref_name }}_${{ matrix.target }}.zip
+          Compress-Archive -Path "dist/*" -DestinationPath "cfst_${{ github.ref_name }}_${{ matrix.target }}.zip"
+          Get-Item "cfst_${{ github.ref_name }}_${{ matrix.target }}.zip"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
