@@ -14,7 +14,7 @@ Rust 实现的 Cloudflare CDN IP 延迟和速度测试工具。基于 [XIU2/Clou
 
 ## 性能对比 (vs Go 版)
 
-| 场景 | Go v2.3.5 | Rust v2.4.0_rust | 提升 |
+| 场景 | Go v2.3.5 | Rust v2.4.0-rust | 提升 |
 |------|-----------|-------------|------|
 | TCPing 25 CIDR (2601 IPs) | >600s | ~89s | **~7×** |
 | TCPing 500 IPs | ~61s | ~19s | **~3.2×** |
