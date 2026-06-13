@@ -109,22 +109,22 @@ jobs:
         shell: bash
         run: |
           cd dist
-          tar -czf "../cfst_${{ github.ref_name }}_${{ matrix.target }}.tar.gz" .
+          tar -czf "../cfst-${{ github.ref_name }}-${{ matrix.target }}.tar.gz" .
           cd ..
-          ls -la "cfst_${{ github.ref_name }}_${{ matrix.target }}.tar.gz"
+          ls -la "cfst-${{ github.ref_name }}-${{ matrix.target }}.tar.gz"
 
       - name: Create zip archive
         if: matrix.archive == 'zip'
         shell: pwsh
         run: |
-          Compress-Archive -Path "dist/*" -DestinationPath "cfst_${{ github.ref_name }}_${{ matrix.target }}.zip"
-          Get-Item "cfst_${{ github.ref_name }}_${{ matrix.target }}.zip"
+          Compress-Archive -Path "dist/*" -DestinationPath "cfst-${{ github.ref_name }}-${{ matrix.target }}.zip"
+          Get-Item "cfst-${{ github.ref_name }}-${{ matrix.target }}.zip"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: cfst-${{ matrix.target }}
-          path: cfst_${{ github.ref_name }}_${{ matrix.target }}.*
+          name: cfst-${{ github.ref_name }}-${{ matrix.target }}
+          path: cfst-${{ github.ref_name }}-${{ matrix.target }}.*
           compression-level: 0
           retention-days: 7
 
