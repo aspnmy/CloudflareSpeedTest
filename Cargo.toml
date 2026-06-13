@@ -1,6 +1,6 @@
 [package]
 name = "cfst"
-version = "2.4.0"
+version = "2.4.0_rust"
 edition = "2021"
 description = "CloudflareSpeedTest - Test latency and speed of Cloudflare CDN IPs"
 license = "GPL-3.0"
