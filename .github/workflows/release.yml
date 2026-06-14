@@ -82,9 +82,11 @@ jobs:
 
       - name: Setup cross (cross-compilation)
         if: matrix.cross == true
-        uses: cross-rs/setup-cross@v1
-        with:
-          cross-version: latest
+        shell: bash
+        run: |
+          curl -fsSL https://github.com/cross-rs/cross/releases/latest/download/cross-x86_64-unknown-linux-musl.tar.gz | tar -xz -C /tmp
+          mv /tmp/cross /usr/local/bin/cross
+          cross --version
 
       - name: Build (native)
         if: matrix.cross == false

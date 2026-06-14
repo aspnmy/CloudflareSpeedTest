@@ -70,7 +70,7 @@ permissions:
 1. **GITHUB_TOKEN 必须显式注入** —— `softprops/action-gh-release` 必须通过 `env.GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}` 注入，否则会静默失败而不创建 Release。
 2. **Artifact 命名必须包含版本信息** —— `name: cfst-${{ github.ref_name }}-${{ matrix.target }}`，否则不同 tag 发布之间会产生名称冲突与覆盖。
 3. **统一使用 `-` 作为分隔符** —— artifact 名称、压缩包文件名、path 通配符必须使用相同的 `-` 分隔符，避免 `_` 与 `-` 混用导致匹配失败。
-4. **跨平台使用 `cross-rs/setup-cross@v1`** —— 不要用 `cargo install cross --locked`，后者编译时间长且可能失败。原生构建保留 `cargo build`。
+4. **跨平台采用官方预编译 cross 二进制** —— `cross-rs/setup-cross@v1` action 不存在，不要使用；推荐直接从 `https://github.com/cross-rs/cross/releases` 下载 `cross-x86_64-unknown-linux-musl.tar.gz` 并放到 `PATH`。原生构建保留 `cargo build`。
 5. **每个步骤显式声明 `shell`** —— Windows 步骤必须 `shell: pwsh`，Linux/macOS 步骤使用 `shell: bash`，避免依赖 runner 默认 shell。
 6. **压缩包文件路径必须带引号** —— YAML 中 `dist/*` 等通配符与 `**/*` 必须用单引号/双引号包裹，避免 YAML 解析错误。
 7. **Artifact 的 `path` 与实际生成文件名严格匹配** —— 例如生成 `cfst-${{ github.ref_name }}-${{ matrix.target }}.tar.gz`，path 通配符必须写成 `cfst-${{ github.ref_name }}-${{ matrix.target }}.*`。
@@ -167,9 +167,11 @@ jobs:
 
       - name: Setup cross (cross-compilation)
         if: matrix.cross == true
-        uses: cross-rs/setup-cross@v1
-        with:
-          cross-version: latest
+        shell: bash
+        run: |
+          curl -fsSL https://github.com/cross-rs/cross/releases/latest/download/cross-x86_64-unknown-linux-musl.tar.gz | tar -xz -C /tmp
+          mv /tmp/cross /usr/local/bin/cross
+          cross --version
 
       - name: Build (native)
         if: matrix.cross == false
@@ -245,7 +247,7 @@ jobs:
 | Release 生成但没有任何 Assets | `files` 通配符与 artifact 路径不匹配 | 检查 download-artifact 目录结构并修正通配符 |
 | Windows 步骤报路径解析错误 | 未显式 `shell: pwsh` 或 `dist/*` 写成 `dist\\*` | 改为正斜杠并加引号 |
 | artifact 上传失败（duplicate / 不匹配） | artifact `name` 跨 matrix 不唯一 | 必须包含 `github.ref_name` 与 `matrix.target` |
-| cross 安装/编译失败 | `cargo install cross` 太慢或依赖失败 | 改用 `cross-rs/setup-cross@v1` |
+| cross 安装/编译失败 | `cargo install cross` 太慢或依赖失败 | 改用官方 releases 页面下载 `cross-x86_64-unknown-linux-musl.tar.gz` 直接解压到 `PATH` |
 | Release 步骤失败但日志信息不足 | `fail_on_unmatched_files` 未开启 | 设为 `true` 便于定位匹配问题 |
 
 ## 触发发布
